@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
               color: Colors.black,
             ),
           )),
-      home: store.read('firstLaunc') == null
+      home: store.read('firstLaunch') == null
           ? Welcome()
           : Tabb(), //WelcomePage(),
     );

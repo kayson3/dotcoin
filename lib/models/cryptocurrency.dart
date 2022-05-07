@@ -140,31 +140,31 @@ final cryptoList = [
 
 final cryptoListHome = [
   CryptoList(
-      iconLogo: iconCryptoPath[10],
-      cryptoCurrency: 'arata',
-      cryptoQuantity: '0.24415',
-      cryptoBalance: '\$ 51.423',
-      percent: 2.17,
-      name: 'ARATA',
-      address: store.read('walletmnemonic') == null
-          ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum)),
-  CryptoList(
       iconLogo: iconCryptoPath[0],
       cryptoCurrency: 'BTC',
       cryptoQuantity: '1.24415',
       cryptoBalance: '\$ 51.423',
-      percent: 5.17,
+      percent: 0.00,
       name: 'Bitcoin',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
           : wallet.getAddressForCoin(TWCoinType.TWCoinTypeBitcoin)),
   CryptoList(
+      iconLogo: iconCryptoPath[5],
+      cryptoCurrency: 'BCH',
+      cryptoQuantity: '1.72839',
+      cryptoBalance: '\$ 1.423.282',
+      percent: 0.00,
+      name: 'BitcoinCash',
+      address: store.read('walletmnemonic') == null
+          ? 'xxxxx'
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeBitcoinCash)),
+  CryptoList(
       iconLogo: iconCryptoPath[1],
       cryptoCurrency: 'ETH',
       cryptoQuantity: '2.15741',
       cryptoBalance: '\$ 638',
-      percent: 1.43,
+      percent: 0.00,
       name: 'Ethereum',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
@@ -172,9 +172,9 @@ final cryptoListHome = [
   CryptoList(
       iconLogo: iconCryptoPath[3],
       cryptoCurrency: 'XRP',
-      cryptoQuantity: '261.73645',
-      cryptoBalance: '\$ 0.45',
-      percent: -2.78,
+      cryptoQuantity: '16.14362',
+      cryptoBalance: '\$ 243.282',
+      percent: 0.00,
       name: 'Ripple',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
@@ -184,7 +184,7 @@ final cryptoListHome = [
       cryptoCurrency: 'LTC',
       cryptoQuantity: '16.14362',
       cryptoBalance: '\$ 243.282',
-      percent: 31.73,
+      percent: 0.00,
       name: 'Litecoin',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'

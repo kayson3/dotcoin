@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -11,6 +12,7 @@ import 'package:dotcoin/utils/styles.dart';
 import 'package:dotcoin/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_ffi.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -20,9 +22,80 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  @override
+  initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      print(timeStamp);
+      getCryptoStats();
+    });
+    super.initState();
+  }
+
+  Future getCryptoStats() async {
+    Uri url = Uri.http(
+        "sandbox-api.coinmarketcap.com", //https://pro-api.coinmarketcap.com
+        "/v1/cryptocurrency/quotes/latest",
+        {
+          "symbol": 'BTC,BCH,ETH,XRP,LTC',
+          "convert": 'USD',
+        });
+    Map<String, String> header = {
+      'X-CMC_PRO_API_KEY':
+          'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c' //554e2ac4-9e3e-4429-b115-6fe1b2f733d0
+    };
+
+    http.Response response = await http
+        .get(url, headers: header)
+        .onError<SocketException>(
+            (error, stackTrace) => showSnackBarr('Network Error'));
+    var results = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print(response.statusCode);
+      for (var i = 0; i < cryptoListHome.length; i++) {
+        if (cryptoListHome[i].cryptoCurrency == 'BTC') {
+          double percentt =
+              results['data']['BTC']["quote"]["USD"]["percent_change_24h"];
+          cryptoListHome[i].percent = double.parse(percentt.toStringAsFixed(2));
+        } else if (cryptoListHome[i].cryptoCurrency == 'BCH') {
+          double percentt =
+              results['data']['BCH']["quote"]["USD"]["percent_change_24h"];
+          cryptoListHome[i].percent = double.parse(percentt.toStringAsFixed(2));
+        } else if (cryptoListHome[i].cryptoCurrency == 'ETH') {
+          double percentt =
+              results['data']['ETH']["quote"]["USD"]["percent_change_24h"];
+          cryptoListHome[i].percent = double.parse(percentt.toStringAsFixed(2));
+        } else if (cryptoListHome[i].cryptoCurrency == 'XRP') {
+          double percentt =
+              results['data']['XRP']["quote"]["USD"]["percent_change_24h"];
+          cryptoListHome[i].percent = double.parse(percentt.toStringAsFixed(2));
+        } else if (cryptoListHome[i].cryptoCurrency == 'LTC') {
+          double percentt =
+              results['data']['LTC']["quote"]["USD"]["percent_change_24h"];
+          cryptoListHome[i].percent = double.parse(percentt.toStringAsFixed(2));
+        }
+      }
+      setState(() {});
+    } else {
+      print(response.statusCode);
+      print(response.body);
+      showSnackBarr(response.body);
+    }
+  }
+
+  showSnackBarr(String content) {
+    scaffoldState.currentState!.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: const Duration(milliseconds: 2000),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldState,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(5), child: Container()),
@@ -190,12 +263,11 @@ class _HomeState extends State<Home> {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  e.percent >= 0
+                                  e.percent > 0
                                       ? '+' + e.percent.toString() + '%'
-                                      : e.percent.toString() + '%',
+                                      : '-' + e.percent.toString() + '%',
                                   style: TextStyle(
-                                    color:
-                                        e.percent >= 0 ? buyColor : sellColor,
+                                    color: e.percent > 0 ? buyColor : sellColor,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
