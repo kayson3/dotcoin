@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dotcoin/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
+import 'package:http/http.dart' as http;
 import '../../utils/utils.dart';
 import '../../../widgets/widgets.dart';
 import '../widgets/card_statistics.dart';
@@ -18,11 +21,104 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  List<FlSpot>? data = [
+    FlSpot(0, 2.6),
+    FlSpot(6, 2.6),
+    FlSpot(8, 2.6),
+    FlSpot(10, 2.6),
+    FlSpot(14, 2.6),
+    FlSpot(16, 2.6),
+    FlSpot(18, 2.6),
+    FlSpot(24, 2.6),
+  ];
+  int picked = 1;
+  @override
+  initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      print(timeStamp);
+      getCryptoStats(cryptoListd!.name! == 'BitcoinCash' ? 'bitcoin-cash' : '',
+          picked, 'hourly');
+    });
+    super.initState();
+  }
+
+  Future getCryptoStats(String coin, int days, String interval) async {
+    Uri url = Uri.http(
+        "api.coingecko.com", //https://pro-api.coinmarketcap.com
+        "/api/v3/coins/$coin/market_chart",
+        {"vs_currency": 'usd', "days": days.toString(), "interval": interval});
+
+    http.Response response = await http.get(url).onError<SocketException>(
+        (error, stackTrace) => showSnackBarr('Network Error'));
+    var results = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      print(response.statusCode);
+      if (days == 1) {
+        print(response.request);
+
+        setState(() {
+          data = [
+            FlSpot(0, double.parse(results["prices"][0][1].toStringAsFixed(2))),
+            FlSpot(4, double.parse(results["prices"][4][1].toStringAsFixed(2))),
+            FlSpot(8, double.parse(results["prices"][8][1].toStringAsFixed(2))),
+            FlSpot(
+                12, double.parse(results["prices"][12][1].toStringAsFixed(2))),
+            FlSpot(
+                16, double.parse(results["prices"][16][1].toStringAsFixed(2))),
+            FlSpot(
+                20, double.parse(results["prices"][20][1].toStringAsFixed(2)))
+          ];
+        });
+      } else if (days == 7) {
+        print(response.request);
+        data = [
+          FlSpot(0, double.parse(results["prices"][0][1].toStringAsFixed(2))),
+          FlSpot(1, double.parse(results["prices"][1][1].toStringAsFixed(2))),
+          FlSpot(2, double.parse(results["prices"][2][1].toStringAsFixed(2))),
+          FlSpot(3, double.parse(results["prices"][3][1].toStringAsFixed(2))),
+          FlSpot(4, double.parse(results["prices"][4][1].toStringAsFixed(2))),
+          FlSpot(5, double.parse(results["prices"][5][1].toStringAsFixed(2))),
+          FlSpot(6, double.parse(results["prices"][6][1].toStringAsFixed(2))),
+        ];
+        setState(() {});
+      } else if (days == 29) {
+        print(response.request);
+        data = [
+          FlSpot(0, double.parse(results["prices"][3][1].toStringAsFixed(2))),
+          FlSpot(3, double.parse(results["prices"][6][1].toStringAsFixed(2))),
+          FlSpot(6, double.parse(results["prices"][9][1].toStringAsFixed(2))),
+          FlSpot(9, double.parse(results["prices"][12][1].toStringAsFixed(2))),
+          FlSpot(12, double.parse(results["prices"][15][1].toStringAsFixed(2))),
+          FlSpot(15, double.parse(results["prices"][18][1].toStringAsFixed(2))),
+          FlSpot(18, double.parse(results["prices"][21][1].toStringAsFixed(2))),
+          FlSpot(21, double.parse(results["prices"][24][1].toStringAsFixed(2))),
+          FlSpot(24, double.parse(results["prices"][27][1].toStringAsFixed(2))),
+        ];
+        setState(() {});
+      }
+    } else {
+      print(response.statusCode);
+      print(response.body);
+      showSnackBarr(response.body);
+    }
+  }
+
+  showSnackBarr(String content) {
+    scaffoldState.currentState!.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: const Duration(milliseconds: 2000),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
 
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -60,15 +156,56 @@ class _DetailsState extends State<Details> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _chipContainer(textChip: '1D'),
-                  Text('7D'),
-                  Text('1M'),
-                  Text('3M'),
-                  Text('1Y'),
-                  Text('YTD'),
-                  Text('ALL'),
+                  picked == 1
+                      ? _chipContainer(textChip: '1D')
+                      : GestureDetector(
+                          onTap: () {
+                            if (picked != 1) {
+                              picked = 1;
+                              getCryptoStats(
+                                  cryptoListd!.name! == 'BitcoinCash'
+                                      ? 'bitcoin-cash'
+                                      : '',
+                                  picked,
+                                  'hourly');
+                              setState(() {});
+                            }
+                          },
+                          child: Text('1D')),
+                  picked == 7
+                      ? _chipContainer(textChip: '1W')
+                      : GestureDetector(
+                          onTap: () {
+                            if (picked != 7) {
+                              picked = 7;
+                              getCryptoStats(
+                                  cryptoListd!.name! == 'BitcoinCash'
+                                      ? 'bitcoin-cash'
+                                      : '',
+                                  picked,
+                                  'daily');
+                              setState(() {});
+                            }
+                          },
+                          child: Text('1W')),
+                  picked == 29
+                      ? _chipContainer(textChip: '1M')
+                      : GestureDetector(
+                          onTap: () {
+                            if (picked != 29) {
+                              picked = 29;
+                              getCryptoStats(
+                                  cryptoListd!.name! == 'BitcoinCash'
+                                      ? 'bitcoin-cash'
+                                      : '',
+                                  picked,
+                                  'daily');
+                              setState(() {});
+                            }
+                          },
+                          child: Text('1M')),
                 ],
               ),
             ),
@@ -192,9 +329,9 @@ class _DetailsState extends State<Details> {
       borderData: FlBorderData(
         show: false,
       ),
-      maxX: 24,
+      /*maxX: 24,
       maxY: 5,
-      minY: 1,
+      minY: 1,*/
       lineBarsData: linesBarData(),
     );
   }
@@ -202,16 +339,7 @@ class _DetailsState extends State<Details> {
   List<LineChartBarData> linesBarData() {
     return [
       LineChartBarData(
-        spots: [
-          FlSpot(0, 2),
-          FlSpot(6, 2.8),
-          FlSpot(8, 2.0),
-          FlSpot(10, 2.5),
-          FlSpot(14, 3.2),
-          FlSpot(16, 2.2),
-          FlSpot(18, 2.6),
-          FlSpot(24, 5),
-        ],
+        spots: data,
         isCurved: false,
         colors: [
           cryptoListd!.percent >= 0 ? Colors.green : sellColor,
