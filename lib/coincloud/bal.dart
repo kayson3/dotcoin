@@ -4,19 +4,42 @@ import 'package:dotcoin/coincloud/tab.dart';
 import 'package:dotcoin/global.dart';
 import 'package:dotcoin/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Bal extends StatefulWidget {
-  const Bal({Key? key}) : super(key: key);
+  Bal({Key? key, this.swap, this.pay}) : super(key: key);
+  final swap;
+  final String? pay;
 
   @override
   State<Bal> createState() => _BalState();
 }
 
 class _BalState extends State<Bal> {
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  void showSnackBar(String content) {
+    scaffoldState.currentState!.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: const Duration(milliseconds: 200),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    if (widget.swap != null) {
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        print(timeStamp);
+        dialog1();
+      });
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-
     return Scaffold(
       key: scaffoldState,
       appBar: AppBar(
@@ -134,5 +157,53 @@ class _BalState extends State<Bal> {
         ),
       ]),
     );
+  }
+
+  dialog1() {
+    var size = MediaQuery.of(context).size;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+              child: SizedBox(
+                  height: size.height / 3.5,
+                  width: size.width / 3.5,
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                                'Send ${widget.pay} ${widget.swap['fromCurrency']} to ${widget.swap['payinAddress']}',
+                                overflow: TextOverflow.visible,
+                                style: TextStyle(fontSize: 20)),
+                            Padding(
+                                padding: EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                    'You get ${widget.swap['amount']} ${widget.swap['toCurrency']}',
+                                    overflow: TextOverflow.visible,
+                                    style: TextStyle(fontSize: 20))),
+                            TextButton(
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: widget.swap['payinAddress']
+                                        .toString()));
+
+                                Navigator.pop(context);
+                                showSnackBar('Copied!!');
+                              },
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.copy_rounded,
+                                        color: Colors.black),
+                                    Text('Copy Address',
+                                        overflow: TextOverflow.visible,
+                                        style: TextStyle(fontSize: 20))
+                                  ]),
+                            )
+                          ]))));
+        });
   }
 }

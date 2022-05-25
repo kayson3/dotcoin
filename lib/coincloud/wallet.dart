@@ -151,7 +151,7 @@ class _WalletState extends State<Wallet> {
                       Navigator.push<void>(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const Bal(),
+                          builder: (BuildContext context) => Bal(),
                         ),
                       );
                     },

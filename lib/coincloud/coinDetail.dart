@@ -37,8 +37,12 @@ class _DetailsState extends State<Details> {
   initState() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       print(timeStamp);
-      getCryptoStats(cryptoListd!.name! == 'BitcoinCash' ? 'bitcoin-cash' : '',
-          picked, 'hourly');
+      getCryptoStats(
+          cryptoListd!.name! == 'BitcoinCash'
+              ? 'bitcoin-cash'
+              : cryptoListd!.name!.toLowerCase(),
+          picked,
+          'hourly');
     });
     super.initState();
   }
@@ -167,7 +171,7 @@ class _DetailsState extends State<Details> {
                               getCryptoStats(
                                   cryptoListd!.name! == 'BitcoinCash'
                                       ? 'bitcoin-cash'
-                                      : '',
+                                      : cryptoListd!.name!.toLowerCase(),
                                   picked,
                                   'hourly');
                               setState(() {});
@@ -183,7 +187,7 @@ class _DetailsState extends State<Details> {
                               getCryptoStats(
                                   cryptoListd!.name! == 'BitcoinCash'
                                       ? 'bitcoin-cash'
-                                      : '',
+                                      : cryptoListd!.name!.toLowerCase(),
                                   picked,
                                   'daily');
                               setState(() {});
@@ -199,7 +203,7 @@ class _DetailsState extends State<Details> {
                               getCryptoStats(
                                   cryptoListd!.name! == 'BitcoinCash'
                                       ? 'bitcoin-cash'
-                                      : '',
+                                      : cryptoListd!.name!.toLowerCase(),
                                   picked,
                                   'daily');
                               setState(() {});

@@ -27,7 +27,7 @@ class Dapp extends StatefulWidget {
 }
 
 const maticRpcUri =
-    'https://rpc-mainnet.maticvigil.com/v1/140d92ff81094f0f3d7babde06603390d7e581be';
+    'https://mainnet-nethermind.blockscout.com'; //https://rpc-mainnet.maticvigil.com/v1/5c27f0cb111c0c39b47d2f4215e013af42d4fb67
 
 enum MenuItems {
   PREVIOUS_SESSION,
@@ -39,7 +39,7 @@ enum MenuItems {
 
 class _DappState extends State<Dapp> {
   late WCClient _wcClient;
-
+  //late SharedPreferences _prefs;
   late InAppWebViewController _webViewController;
   late TextEditingController _textEditingController;
   late String walletAddress, privateKey;
@@ -68,28 +68,21 @@ class _DappState extends State<Dapp> {
       onConnect: _onConnect,
     );
     // TODO: Mention walletAddress and privateKey while connecting
-    walletAddress =
-        wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum); // 714
-    print(walletAddress);
-
+    walletAddress = wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum);
     Uint8List privateKeyy =
         wallet.getKeyForCoin(TWCoinType.TWCoinTypeEthereum).data();
-    print(privateKeyy);
-    print('\n');
-    String privateKey = hex.encode(privateKeyy);
-    print(privateKey);
+    privateKey = hex.encode(privateKeyy);
 
     _textEditingController = TextEditingController();
     //_prefs = await SharedPreferences.getInstance();
-    print('2');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dapp", style: TextStyle(color: deepBlue)),
         automaticallyImplyLeading: false,
+        title: Text('Dapp', style: TextStyle(color: deepBlue)),
         actions: [
           PopupMenuButton<MenuItems>(
             onSelected: (item) {
@@ -183,7 +176,7 @@ class _DappState extends State<Dapp> {
       body: InAppWebView(
         initialUrlRequest: URLRequest(
             url: Uri.parse(
-                'https://pancakeswap.finance')), //example.walletconnect.org
+                'https://www.google.com/search?q=pancakeswap')), // google.com
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
             useShouldOverrideUrlLoading: true,
@@ -195,13 +188,11 @@ class _DappState extends State<Dapp> {
         shouldOverrideUrlLoading: (controller, navAction) async {
           final uri = navAction.request.url;
           final url = uri.toString();
-          debugPrint('URL for fun $url');
+          debugPrint('URL $url');
           if (url.startsWith('wc:')) {
             if (url.contains('bridge') && url.contains('key')) {
-              debugPrint('hi');
               _qrScanHandler(url);
             }
-            debugPrint('hi');
             return NavigationActionPolicy.CANCEL;
           } else {
             return NavigationActionPolicy.ALLOW;
@@ -226,7 +217,7 @@ class _DappState extends State<Dapp> {
   }
 
   _connectToPreviousSession() {
-    final _sessionSaved = null; //_prefs.getString('session');
+    final _sessionSaved = ''; //_prefs.getString('session');
     debugPrint('_sessionSaved $_sessionSaved');
     _sessionStore = _sessionSaved != null
         ? WCSessionStore.fromJson(jsonDecode(_sessionSaved))
@@ -564,7 +555,7 @@ class _DappState extends State<Dapp> {
                   ),
                   Expanded(
                     child: Text(
-                      'hi', //'${EthConversions.weiToEthUnTrimmed(gasPrice * BigInt.parse(ethereumTransaction.gas ?? '0'), 18)} MATIC',
+                      "{EthConversions.weiToEthUnTrimmed(gasPrice * BigInt.parse(ethereumTransaction.gas ?? '0'), 18)} MATIC",
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ),
@@ -587,7 +578,7 @@ class _DappState extends State<Dapp> {
                   ),
                   Expanded(
                     child: Text(
-                      'yo', //'${EthConversions.weiToEthUnTrimmed(BigInt.parse(ethereumTransaction.value ?? '0'), 18)} MATIC',
+                      "{EthConversions.weiToEthUnTrimmed(BigInt.parse(ethereumTransaction.value ?? '0'), 18)} MATIC",
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ),
@@ -743,14 +734,15 @@ class _DappState extends State<Dapp> {
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () async {
-                      String signedDataHex;
+                      String? signedDataHex;
                       if (ethereumSignMessage.type ==
                           WCSignType.TYPED_MESSAGE) {
-                        /*signedDataHex = EthSigUtil.signTypedData(
+                        /*
+                        signedDataHex = EthSigUtil.signTypedData(
                           privateKey: privateKey,
                           jsonData: ethereumSignMessage.data!,
                           version: TypedDataVersion.V4,
-                        ); */
+                        );*/
                       } else {
                         final creds = EthPrivateKey.fromHex(privateKey);
                         final encodedMessage =
@@ -759,10 +751,11 @@ class _DappState extends State<Dapp> {
                             await creds.signPersonalMessage(encodedMessage);
                         signedDataHex = bytesToHex(signedData, include0x: true);
                       }
-                      //debugPrint('SIGNED $signedDataHex');
+                      debugPrint('SIGNED $signedDataHex!');
                       _wcClient.approveRequest<String>(
-                          id: id, result: '' //signedDataHex,
-                          );
+                        id: id,
+                        result: signedDataHex!,
+                      );
                       Navigator.pop(context);
                     },
                     child: Text('SIGN'),

@@ -1,11 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+import 'dart:io';
+import 'package:dotcoin/coincloud/bal.dart';
 import 'package:dotcoin/global.dart';
 import 'package:dotcoin/models/models.dart';
 import 'package:dotcoin/utils/styles.dart';
 import 'package:dotcoin/widgets/cryptoforswap.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+
+import '../utils/constants.dart';
 
 class Swap extends StatefulWidget {
   const Swap({Key? key}) : super(key: key);
@@ -17,10 +22,32 @@ class Swap extends StatefulWidget {
 class _SwapState extends State<Swap> {
   CryptoList? pay = cryptoList[0];
   CryptoList? get = cryptoList[1];
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  TextEditingController payController = TextEditingController();
+  TextEditingController getController = TextEditingController();
+
+  List? searchList;
+
+  showSnackBarr(String content) {
+    scaffoldState.currentState!.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: const Duration(milliseconds: 2000),
+      ),
+    );
+  }
+
+  @override
+  initState() {
+    payController.text = '0.00';
+    getController.text = '0.00';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldState,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
@@ -53,7 +80,13 @@ class _SwapState extends State<Swap> {
                         child: TextFormField(
                             keyboardType: TextInputType.numberWithOptions(),
                             cursorColor: deepBlue,
-                            initialValue: '0',
+                            controller: payController,
+                            onFieldSubmitted: (val) {
+                              dialog1();
+                              if (val.isNotEmpty) {
+                                estimatedA().then((value) {});
+                              }
+                            },
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 focusColor: deepBlue)),
@@ -99,8 +132,9 @@ class _SwapState extends State<Swap> {
                         width: 100,
                         child: TextFormField(
                             keyboardType: TextInputType.numberWithOptions(),
+                            controller: getController,
+                            readOnly: true,
                             cursorColor: deepBlue,
-                            initialValue: '0',
                             decoration:
                                 InputDecoration(border: InputBorder.none)),
                       ),
@@ -142,7 +176,10 @@ class _SwapState extends State<Swap> {
   Widget _floatingButton({Color? color, required String text, bool? pressed}) {
     return ElevatedButton(
       onPressed: () {
-        if (pressed!) {}
+        if (payController.text.isNotEmpty) {
+          dialog1();
+          swapA();
+        }
       },
       style: ElevatedButton.styleFrom(primary: color, elevation: 5),
       child: Padding(
@@ -195,12 +232,17 @@ class _SwapState extends State<Swap> {
                         setState(() {
                           pay = cryptoList[index];
                         });
-                        Navigator.pop(context);
-                      } else {
+                        Navigator.pop(context); //
+
+                      } else if (val == 'get') {
                         setState(() {
                           get = cryptoList[index];
                         });
                         Navigator.pop(context);
+                        //dialog1();
+                        //minimumA().then((value) {
+                        // return null;
+                        //});
                       }
                     },
                     child: Padding(
@@ -211,5 +253,97 @@ class _SwapState extends State<Swap> {
                 }),
           );
         });
+  }
+
+  dialog1() {
+    var size = MediaQuery.of(context).size;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+              child: SizedBox(
+                  height: size.height / 5,
+                  width: size.width / 5,
+                  child: SizedBox(
+                      height: size.height / 10,
+                      width: size.width / 5,
+                      child: Center(child: CircularProgressIndicator()))));
+        });
+  }
+
+  swapA() async {
+    var headers = {'Content-Type': 'application/json'};
+    var request = http.Request(
+        'POST',
+        Uri.parse(
+            'https://api.changenow.io/v1/transactions/e70e1eb5e487fbfa4d88d0eb92cea65034616fc49aa3ae447333108d56089d32'));
+    request.body = json.encode({
+      "from": pay!.cryptoCurrency,
+      "to": get!.cryptoCurrency,
+      "address": get!.address,
+      "amount": payController.text,
+      "extraId": "",
+      "userId": "",
+      "contactEmail": "",
+      "refundAddress": "",
+      "refundExtraId": ""
+    });
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response =
+        await request.send().onError<SocketException>((error, stackTrace) {
+      Navigator.pop(context);
+      return showSnackBarr('Network Error');
+    });
+
+    http.Response res = await http.Response.fromStream(response);
+    print(res.body);
+    var results = jsonDecode(res.body);
+    Navigator.pop(context);
+    if (response.statusCode == 200) {
+      cryptoListd = pay;
+      print('results');
+      print(results);
+      Navigator.push<void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) =>
+              Bal(swap: results, pay: payController.text),
+        ),
+      );
+    } else {
+      print(response.reasonPhrase);
+      print(results);
+      showSnackBarr(results["message"].toString());
+    }
+  }
+
+  Future estimatedA() async {
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://api.changenow.io/v1/exchange-amount/${payController.text}/${pay!.cryptoCurrency}_${get!.cryptoCurrency}?api_key=e70e1eb5e487fbfa4d88d0eb92cea65034616fc49aa3ae447333108d56089d32'));
+
+    http.StreamedResponse response =
+        await request.send().onError<SocketException>((error, stackTrace) {
+      Navigator.pop(context);
+      return showSnackBarr('Network Error');
+    });
+    http.Response res = await http.Response.fromStream(response);
+    print(res.body);
+    var results = jsonDecode(res.body);
+    Navigator.pop(context);
+    if (response.statusCode == 200) {
+      print('results');
+      print(results);
+
+      setState(() {
+        getController.text = results["estimatedAmount"].toString();
+      });
+    } else {
+      print(response.reasonPhrase);
+      print(results);
+      showSnackBarr(results["error"].toString());
+    }
   }
 }

@@ -155,9 +155,9 @@ void bottomSheet(text, key, context) {
                         TextFormField(
                           keyboardType: TextInputType.numberWithOptions(),
                           validator: (val) {
-                            return val!.length > 8
+                            return val!.length < 0
                                 ? null
-                                : 'Phone Number must exceed 8 characters';
+                                : 'must exceed 0 characters';
                           },
                           //controller: phoneController,
                           style: const TextStyle(color: Colors.black),
@@ -202,6 +202,7 @@ void bottomSheet(text, key, context) {
                         floatingButton(
                           text: 'SEND',
                           color: deepBlue,
+                          pressed: false,
                         ),
                         SizedBox(height: 5),
                         Text(
