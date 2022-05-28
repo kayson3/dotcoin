@@ -2,4 +2,4 @@ workflows:
   my-workflow:
     environment:
       flutter: beta
-    instance_type: mac_pro
+    
