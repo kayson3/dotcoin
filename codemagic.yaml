@@ -1,0 +1,5 @@
+workflows:
+  my-workflow:
+    environment:
+      flutter: beta
+    
