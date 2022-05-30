@@ -29,7 +29,7 @@ final cryptoList = [
   CryptoList(
       iconLogo: iconCryptoPath[10],
       cryptoCurrency: 'arata',
-      cryptoQuantity: '0.24415',
+      cryptoQuantity: store.read('aratabal'),
       cryptoBalance: '\$ 51.423',
       percent: 2.17,
       name: 'ARATA',
@@ -39,7 +39,7 @@ final cryptoList = [
   CryptoList(
       iconLogo: iconCryptoPath[0],
       cryptoCurrency: 'BTC',
-      cryptoQuantity: '1.24415',
+      cryptoQuantity: store.read('btcbal'),
       cryptoBalance: '\$ 51.423',
       percent: 5.17,
       name: 'Bitcoin',
@@ -49,7 +49,7 @@ final cryptoList = [
   CryptoList(
       iconLogo: iconCryptoPath[1],
       cryptoCurrency: 'ETH',
-      cryptoQuantity: '2.15741',
+      cryptoQuantity: store.read('ethbal'),
       cryptoBalance: '\$ 638',
       percent: 1.43,
       name: 'Ethereum',
@@ -59,7 +59,7 @@ final cryptoList = [
   CryptoList(
       iconLogo: iconCryptoPath[2],
       cryptoCurrency: 'ADA',
-      cryptoQuantity: '10.15741',
+      cryptoQuantity: store.read('adabal'),
       cryptoBalance: '\$ 35.672',
       percent: 1.43,
       name: 'Cardano',
@@ -69,7 +69,7 @@ final cryptoList = [
   CryptoList(
       iconLogo: iconCryptoPath[3],
       cryptoCurrency: 'XRP',
-      cryptoQuantity: '261.73645',
+      cryptoQuantity: store.read('xrpbal'),
       cryptoBalance: '\$ 0.45',
       percent: -2.78,
       name: 'Ripple',
@@ -77,19 +77,19 @@ final cryptoList = [
           ? 'xxxxx'
           : wallet.getAddressForCoin(TWCoinType.TWCoinTypeXRP)),
   CryptoList(
-      iconLogo: iconCryptoPath[4],
-      cryptoCurrency: 'DOT',
-      cryptoQuantity: '3.14362',
+      iconLogo: 'assets/icons/tron.png',
+      cryptoCurrency: 'TRX',
+      cryptoQuantity: store.read('trxbal'),
       cryptoBalance: '\$ 143.282',
       percent: 5.03,
-      name: 'PokaDot',
+      name: 'Tron',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypePolkadot)),
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeTron)),
   CryptoList(
       iconLogo: iconCryptoPath[5],
       cryptoCurrency: 'BCH',
-      cryptoQuantity: '1.72839',
+      cryptoQuantity: store.read('bchbal'),
       cryptoBalance: '\$ 1.423.282',
       percent: 6.36,
       name: 'BitcoinCash',
@@ -97,45 +97,36 @@ final cryptoList = [
           ? 'xxxxx'
           : wallet.getAddressForCoin(TWCoinType.TWCoinTypeBitcoinCash)),
   CryptoList(
-      iconLogo: iconCryptoPath[6],
-      cryptoCurrency: 'UNI',
-      cryptoQuantity: '15.13661',
+      iconLogo: 'assets/icons/doge.png',
+      cryptoCurrency: 'DOGE',
+      cryptoQuantity: store.read('dogebal'),
       cryptoBalance: '\$ 34.148',
       percent: 2.41,
-      name: 'UVI',
+      name: 'DogeCoin',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
           : wallet.getAddressForCoin(TWCoinType.TWCoinTypeLitecoin)),
   CryptoList(
-      iconLogo: iconCryptoPath[7],
-      cryptoCurrency: 'LTC',
-      cryptoQuantity: '16.14362',
+      iconLogo: 'assets/icons/polygon.png',
+      cryptoCurrency: 'MATIC',
+      cryptoQuantity: store.read('maticbal'),
       cryptoBalance: '\$ 243.282',
       percent: 31.73,
-      name: 'Litecoin',
+      name: 'Polygon',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
           : wallet.getAddressForCoin(TWCoinType.TWCoinTypeLitecoin)),
+
   CryptoList(
-      iconLogo: iconCryptoPath[8],
-      cryptoCurrency: 'XMR',
-      cryptoQuantity: '2.83952',
-      cryptoBalance: '\$ 10.519',
-      percent: -2.18,
-      name: 'Monero',
-      address: store.read('walletmnemonic') == null
-          ? 'xxxxx'
-          : wallet.getAddressForCoin(0)), //128
-  CryptoList(
-      iconLogo: iconCryptoPath[9],
-      cryptoCurrency: 'LINK',
-      cryptoQuantity: '8.82745',
+      iconLogo: 'assets/icons/stellar.png',
+      cryptoCurrency: 'XLM',
+      cryptoQuantity: store.read('xlmbal'),
       cryptoBalance: '\$ 16.729',
       percent: 15.03,
-      name: 'Link',
+      name: 'Stellar',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeLitecoin)), //438
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeStellar)), //438
 ];
 
 final cryptoListHome = [
@@ -176,9 +167,7 @@ final cryptoListHome = [
       cryptoBalance: '\$ 243.282',
       percent: 0.00,
       name: 'Ripple',
-      address: store.read('walletmnemonic') == null
-          ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeXRP)),
+      address: store.read('xrpaddress') ?? 'xxxxx'),
   CryptoList(
       iconLogo: iconCryptoPath[7],
       cryptoCurrency: 'LTC',

@@ -71,7 +71,7 @@ class _DappState extends State<Dapp> {
     walletAddress = wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum);
     Uint8List privateKeyy =
         wallet.getKeyForCoin(TWCoinType.TWCoinTypeEthereum).data();
-    privateKey = hex.encode(privateKeyy);
+    privateKey = store.read('ethpvkey') ?? hex.encode(privateKeyy);
 
     _textEditingController = TextEditingController();
     //_prefs = await SharedPreferences.getInstance();

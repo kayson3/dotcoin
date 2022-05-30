@@ -1,10 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:dotcoin/coincloud/tab.dart';
 import 'package:dotcoin/global.dart';
+import 'package:dotcoin/pages/swap.dart';
 import 'package:dotcoin/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../networking/getbal.dart';
 
 class Bal extends StatefulWidget {
   Bal({Key? key, this.swap, this.pay}) : super(key: key);
@@ -26,6 +31,7 @@ class _BalState extends State<Bal> {
     );
   }
 
+  bool timer = true;
   @override
   void initState() {
     if (widget.swap != null) {
@@ -35,6 +41,11 @@ class _BalState extends State<Bal> {
       });
     }
 
+    // TODO: relace time with get transaction function
+    Timer(const Duration(seconds: 3), () {
+      timer = false;
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -53,114 +64,132 @@ class _BalState extends State<Bal> {
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         ),
       ),
-      body: ListView(padding: EdgeInsets.symmetric(horizontal: 15), children: [
-        SizedBox(height: 30),
-        Text(
-          cryptoListd!.name!,
-          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
-        ),
-        SizedBox(height: 40),
-        Row(
-          children: [
-            Text(
-              cryptoListd!.cryptoQuantity,
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 40),
+      body: RefreshIndicator(
+        onRefresh: () {
+          return getBal().then((_) {
+            setState(() {});
+          });
+        },
+        child:
+            ListView(padding: EdgeInsets.symmetric(horizontal: 15), children: [
+          SizedBox(height: 30),
+          Text(
+            cryptoListd!.name!,
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
+          ),
+          SizedBox(height: 40),
+          Row(
+            children: [
+              Text(
+                cryptoListd!.cryptoQuantity,
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 40),
+              ),
+              Column(children: [
+                Text(
+                  cryptoListd!.cryptoCurrency,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: Colors.grey),
+                ),
+                Text(
+                  '',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                ),
+              ])
+            ],
+          ),
+          Text(
+            '0.00 USD',
+            style: TextStyle(
+                fontWeight: FontWeight.w500, fontSize: 20, color: Colors.grey),
+          ),
+          SizedBox(height: 60),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            GestureDetector(
+              onTap: () {
+                bottomSheet('SEND', scaffoldState, context);
+              },
+              child: Column(
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Icon(Icons.arrow_upward_sharp,
+                          color: Colors.blue[700], size: 30)),
+                  SizedBox(height: 10),
+                  Text('Send')
+                ],
+              ),
             ),
-            Column(children: [
-              Text(
-                cryptoListd!.cryptoCurrency,
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20,
-                    color: Colors.grey),
-              ),
-              Text(
-                '',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-              ),
-            ])
-          ],
-        ),
-        Text(
-          '0.00 USD',
-          style: TextStyle(
-              fontWeight: FontWeight.w500, fontSize: 20, color: Colors.grey),
-        ),
-        SizedBox(height: 60),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          GestureDetector(
-            onTap: () {
-              bottomSheet('SEND', scaffoldState, context);
-            },
-            child: Column(
+            Column(
               children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Icon(Icons.arrow_upward_sharp,
-                        color: Colors.blue[700], size: 30)),
+                GestureDetector(
+                  onTap: () {
+                    bottomSheet('RECIEVE', scaffoldState, context);
+                  },
+                  child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Icon(Icons.arrow_downward_sharp,
+                          color: Colors.blue[700], size: 30)),
+                ),
                 SizedBox(height: 10),
-                Text('Send')
+                Text('Recieve')
               ],
             ),
+            Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const Swap(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.blue[100],
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Icon(Icons.swap_horiz,
+                          color: Colors.blue[700], size: 30)),
+                ),
+                SizedBox(height: 10),
+                Text('Swap')
+              ],
+            )
+          ]),
+          SizedBox(height: 30),
+          Text(
+            'Transactions',
+            style: TextStyle(
+                fontWeight: FontWeight.w500, fontSize: 20, color: Colors.grey),
           ),
-          Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  bottomSheet('RECIEVE', scaffoldState, context);
-                },
-                child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Icon(Icons.arrow_downward_sharp,
-                        color: Colors.blue[700], size: 30)),
-              ),
-              SizedBox(height: 10),
-              Text('Recieve')
-            ],
-          ),
-          Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) =>
-                          const Tabb(state: TabItem.swap),
-                    ),
-                  );
-                },
-                child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Icon(Icons.swap_horiz,
-                        color: Colors.blue[700], size: 30)),
-              ),
-              SizedBox(height: 10),
-              Text('Swap')
-            ],
-          )
+          SizedBox(height: 30),
+          timer
+              ? Center(child: CircularProgressIndicator())
+              : Center(
+                  child: Text(
+                  'No Transactions yet',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ))
         ]),
-        SizedBox(height: 30),
-        Text(
-          'Transactions',
-          style: TextStyle(
-              fontWeight: FontWeight.w500, fontSize: 20, color: Colors.grey),
-        ),
-      ]),
+      ),
     );
   }
 
   dialog1() {
     var size = MediaQuery.of(context).size;
+
     showDialog(
         context: context,
         builder: (BuildContext context) {

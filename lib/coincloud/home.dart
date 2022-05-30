@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
         });
     Map<String, String> header = {
       'X-CMC_PRO_API_KEY':
-          'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c' //554e2ac4-9e3e-4429-b115-6fe1b2f733d0
+          '554e2ac4-9e3e-4429-b115-6fe1b2f733d0' //554e2ac4-9e3e-4429-b115-6fe1b2f733d0
     };
 
     http.Response response = await http
@@ -132,7 +132,7 @@ class _HomeState extends State<Home> {
                         height: 5,
                       ),
                       Center(
-                        child: Text('0.00 USD',
+                        child: Text('0.00 $currency',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,

@@ -25,3 +25,21 @@ box() {
   print(store.read('wallet'));
   //aa.remove('quote');
 }
+
+String currency = "USD";
+saveBal() {
+  if (store.read('xlmbal') == null) {
+    store.write('aratabal', '0.00');
+    store.write('btcbal', '0.00');
+    store.write('ethbal', '0.00');
+    store.write('adabal', '0.00');
+    store.write('xrpbal', '0.00');
+    store.write('trxbal', '0.00');
+    store.write('bchbal', '0.00');
+    store.write('dogebal', '0.00');
+    store.write('maticbal', '0.00');
+    store.write('xlmbal', '0.00');
+  }
+}
+
+bool sent = false;

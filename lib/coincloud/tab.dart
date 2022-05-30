@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:dotcoin/coincloud/home.dart';
 import 'package:dotcoin/coincloud/selectcoin.dart';
+import 'package:dotcoin/coincloud/setting.dart';
 import 'package:dotcoin/coincloud/wallet.dart';
 import 'package:dotcoin/global.dart';
 import 'package:dotcoin/models/cryptocurrency.dart';
@@ -14,8 +15,9 @@ import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
 import '../../../widgets/widgets.dart';
+import '../networking/sendCoin.dart';
 
-enum TabItem { home, wallet, trade, swap, dapp }
+enum TabItem { home, wallet, trade, setting, dapp }
 
 class Tabb extends StatefulWidget {
   const Tabb({Key? key, this.state}) : super(key: key);
@@ -30,7 +32,9 @@ class _TabbState extends State<Tabb> {
   @override
   initState() {
     store.write('firstLaunch', false);
+    saveBal();
     print('htuuu');
+    generateXRP();
     if (widget.state != null) {
       _current = widget.state!;
     } else {
@@ -44,8 +48,8 @@ class _TabbState extends State<Tabb> {
     TabItem.home,
     TabItem.wallet,
     TabItem.trade,
-    TabItem.swap,
-    TabItem.dapp
+    TabItem.dapp,
+    TabItem.setting
   ];
 
   @override
@@ -87,7 +91,7 @@ class _TabbState extends State<Tabb> {
                     : tabItem.index == 2
                         ? 'Trade'
                         : tabItem.index == 3
-                            ? 'Swap'
+                            ? 'Setting'
                             : 'Dapp');
       }).toList(),
       onTap: _selectTab,
@@ -132,8 +136,8 @@ class _TabbState extends State<Tabb> {
         return Icons.account_balance_wallet;
       case TabItem.trade:
         return Icons.model_training_rounded;
-      case TabItem.swap:
-        return Icons.swap_horiz;
+      case TabItem.setting:
+        return Icons.settings;
       case TabItem.dapp:
         return Icons.apps_sharp;
 
@@ -149,7 +153,9 @@ class _TabbState extends State<Tabb> {
       case TabItem.wallet:
         return const Wallet();
 
-      case TabItem.swap:
+      case TabItem.setting:
+        return const Settings();
+      case TabItem.trade:
         return const Swap();
       case TabItem.dapp:
         return Dapp();
@@ -263,10 +269,12 @@ class _TabbState extends State<Tabb> {
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            _current = _tabs[3];
-                          });
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) => const Swap(),
+                            ),
+                          );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,

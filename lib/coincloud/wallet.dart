@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_lib.dart';
 
+import '../networking/getbal.dart';
+
 class Wallet extends StatefulWidget {
   const Wallet({Key? key}) : super(key: key);
 
@@ -140,58 +142,65 @@ class _WalletState extends State<Wallet> {
                       color: Colors.black,
                       fontSize: 25)),
             ),
-            body: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: cryptoList.map((e) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      cryptoListd = e;
-                      Navigator.push<void>(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => Bal(),
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Image.asset(e.iconLogo, height: 50, width: 40),
-                        SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              e.name!,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              e.cryptoCurrency,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        Text(
-                          e.cryptoQuantity,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
+            body: RefreshIndicator(
+              onRefresh: () {
+                return getBal().then((_) {
+                  setState(() {});
+                });
+              },
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                children: cryptoList.map((e) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        cryptoListd = e;
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => Bal(),
                           ),
-                        )
-                      ],
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(e.iconLogo, height: 50, width: 40),
+                          SizedBox(width: 15),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                e.name!,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                e.cryptoCurrency,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          Text(
+                            e.cryptoQuantity,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           );
   }
@@ -236,9 +245,8 @@ class _WalletState extends State<Wallet> {
                   GestureDetector(
                     onTap: () {
                       Clipboard.setData(ClipboardData(text: phrase));
-
-                      showSnackBar('Copied!!');
                       Navigator.pop(context);
+                      showSnackBar('Copied!!');
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -254,9 +262,8 @@ class _WalletState extends State<Wallet> {
                         IconButton(
                             onPressed: () {
                               Clipboard.setData(ClipboardData(text: phrase));
-
-                              showSnackBar('Copied!!');
                               Navigator.pop(context);
+                              showSnackBar('Copied!!');
                             },
                             icon: Icon(Icons.copy, size: 20, color: deepBlue))
                       ],

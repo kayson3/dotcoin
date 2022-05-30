@@ -10,6 +10,9 @@ Widget floatingButton(
     {Color? color, required String text, bool? pressed, context}) {
   return ElevatedButton(
     onPressed: () {
+      if (text == 'SEND') {
+        dialog1(context);
+      }
       if (pressed!) {
         print(text);
 
@@ -51,6 +54,8 @@ Widget customText(
   );
 }
 
+TextEditingController amountController = TextEditingController();
+TextEditingController addressController = TextEditingController();
 void bottomSheet(text, key, context) {
   void showSnackBar(String content) {
     key.currentState!.showSnackBar(
@@ -153,6 +158,7 @@ void bottomSheet(text, key, context) {
                         ),
                         SizedBox(height: 25),
                         TextFormField(
+                          controller: amountController,
                           keyboardType: TextInputType.numberWithOptions(),
                           validator: (val) {
                             return val!.length < 0
@@ -177,6 +183,7 @@ void bottomSheet(text, key, context) {
                         ),
                         const SizedBox(height: 30),
                         TextFormField(
+                          controller: addressController,
                           validator: (val) {
                             return val!.length > 8
                                 ? null
@@ -203,6 +210,7 @@ void bottomSheet(text, key, context) {
                           text: 'SEND',
                           color: deepBlue,
                           pressed: false,
+                          context: context,
                         ),
                         SizedBox(height: 5),
                         Text(
@@ -240,4 +248,20 @@ d() {
                                   InputDecoration(border: InputBorder.none))))
                 ],
               ))));
+}
+
+dialog1(context) {
+  var size = MediaQuery.of(context).size;
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+            child: SizedBox(
+                height: size.height / 5,
+                width: size.width / 5,
+                child: SizedBox(
+                    height: size.height / 10,
+                    width: size.width / 5,
+                    child: Center(child: CircularProgressIndicator()))));
+      });
 }
