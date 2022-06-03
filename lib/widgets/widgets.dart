@@ -6,12 +6,48 @@ import 'package:dotcoin/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../networking/sendCoin.dart';
+
+Future sendTransaction() async {
+  cryptoListd!.cryptoCurrency == 'BTC'
+      ? sendBtc()
+      : cryptoListd!.cryptoCurrency == 'arata'
+          ? sendArata()
+          : cryptoListd!.cryptoCurrency == 'ETH'
+              ? sendEth()
+              : cryptoListd!.cryptoCurrency == 'ADA'
+                  ? sendAda()
+                  : cryptoListd!.cryptoCurrency == 'XRP'
+                      ? sendXrp()
+                      : cryptoListd!.cryptoCurrency == 'TRX'
+                          ? sendTron()
+                          : cryptoListd!.cryptoCurrency == 'BCH'
+                              ? sendBch()
+                              : cryptoListd!.cryptoCurrency == 'DOGE'
+                                  ? sendDoge()
+                                  : cryptoListd!.cryptoCurrency == 'XLM'
+                                      ? sendMatic()
+                                      : cryptoListd!.cryptoCurrency == 'MATIC'
+                                          ? sendMatic()
+                                          : null;
+}
+
 Widget floatingButton(
     {Color? color, required String text, bool? pressed, context}) {
   return ElevatedButton(
     onPressed: () {
       if (text == 'SEND') {
+        sent = false;
         dialog1(context);
+        sendTransaction().then((v) {
+          if (sent = false) {
+            Navigator.pop(context);
+            dialog2('Transaction Failed', context);
+          } else {
+            Navigator.pop(context);
+            dialog2('Transaction Sucessful', context);
+          }
+        });
       }
       if (pressed!) {
         print(text);
@@ -263,5 +299,30 @@ dialog1(context) {
                     height: size.height / 10,
                     width: size.width / 5,
                     child: Center(child: CircularProgressIndicator()))));
+      });
+}
+
+dialog2(content, context) {
+  return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+            title: Text(content),
+            alignment: Alignment.bottomRight,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                      color: deepBlue,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      wordSpacing: 5),
+                ),
+              )
+            ]);
       });
 }
