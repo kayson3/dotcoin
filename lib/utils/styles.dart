@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 final primaryColor = Color(0x73000000);
 final tWalletColor = Color(0xDD000000);
 final colorLight = Color(0x42000000);
@@ -14,8 +16,10 @@ const COLORINDICATORW = Color(0xff505050);
 final homeTextStyle = TextStyle(color: primaryColor);
 
 //PieChart
-const BOXDECORATION = BoxDecoration(
-  color: Color(0xFFFFFFFF),
+var BOXDECORATION = BoxDecoration(
+  color: selectedTheme == 'Themee.dark'
+      ? Color.fromARGB(232, 31, 31, 31)
+      : Colors.white,
   borderRadius: BorderRadius.all(Radius.circular(15)),
 );
 

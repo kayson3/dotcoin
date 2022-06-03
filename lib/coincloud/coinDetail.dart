@@ -11,6 +11,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/utils.dart';
 import '../../../widgets/widgets.dart';
+import '../main.dart';
 import '../widgets/card_statistics.dart';
 
 class Details extends StatefulWidget {
@@ -123,7 +124,6 @@ class _DetailsState extends State<Details> {
 
     return Scaffold(
       key: scaffoldState,
-      backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,

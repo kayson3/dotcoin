@@ -23,6 +23,7 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   void initState() {
+    print(store.read('firstLaunch'));
     super.initState();
   }
 

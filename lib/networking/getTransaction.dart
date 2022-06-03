@@ -9,6 +9,19 @@ import 'dart:convert';
 import '../global.dart';
 import '../widgets/widgets.dart';
 
+getTransactions() {
+  getTArata();
+  getTBtc();
+  getTEth();
+  getTAda();
+  getTXrp();
+  getTTron();
+  getTBch();
+  getTDoge();
+  getTMatic();
+  getTXlm();
+}
+
 getTArata() async {
   getT() async {
     Uri url = Uri.http(

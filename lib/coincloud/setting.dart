@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../global.dart';
+import '../main.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -14,7 +15,18 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
-  bool toggle = true;
+
+  String selectedThemee = store.read('selectedTheme') == 'Themee.light'
+      ? 'light'
+      : store.read('selectedTheme') == 'Themee.dark'
+          ? 'dark'
+          : 'System Default';
+
+  @override
+  initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,20 +53,82 @@ class _SettingsState extends State<Settings> {
               SizedBox(height: 30),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Icon(Icons.color_lens_rounded, color: Colors.grey),
+                SizedBox(width: 20),
                 Text('Theme',
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                         fontSize: 20)),
                 Spacer(),
-                Text('System Default',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey,
-                        fontSize: 19)),
-                SizedBox(height: 10),
+                DropdownButton<String>(
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey,
+                      fontSize: 19),
+                  value: selectedThemee,
+                  /*hint: Text(product.cartQuantity.toString(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                      )),*/
+                  icon: const Icon(Icons.keyboard_arrow_down_sharp,
+                      color: Colors.grey),
+                  items: <String>['light', 'dark'].map((String value) {
+                    return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 17,
+                          ),
+                        ));
+                  }).toList(),
+                  onChanged: (value) {
+                    value == 'System Default'
+                        ? store
+                            .write('selectedTheme', 'Themee.system')
+                            .then((value) => setState(() {
+                                  selectedThemee =
+                                      store.read('selectedTheme') ==
+                                              'Themee.light'
+                                          ? 'light'
+                                          : store.read('selectedTheme') ==
+                                                  'Themee.dark'
+                                              ? 'dark'
+                                              : 'System Default';
+                                }))
+                        : value == 'light'
+                            ? store
+                                .write('selectedTheme', 'Themee.light')
+                                .then((value) => setState(() {
+                                      selectedThemee =
+                                          store.read('selectedTheme') ==
+                                                  'Themee.light'
+                                              ? 'light'
+                                              : store.read('selectedTheme') ==
+                                                      'Themee.dark'
+                                                  ? 'dark'
+                                                  : 'System Default';
+                                    }))
+                            : store
+                                .write('selectedTheme', 'Themee.dark')
+                                .then((value) => setState(() {
+                                      selectedThemee =
+                                          store.read('selectedTheme') ==
+                                                  'Themee.light'
+                                              ? 'light'
+                                              : store.read('selectedTheme') ==
+                                                      'Themee.dark'
+                                                  ? 'dark'
+                                                  : 'System Default';
+                                    }));
+
+                    print(store.read('selectedTheme'));
+                  },
+                ),
               ]),
-              SizedBox(height: 25),
+              SizedBox(height: 20),
               GestureDetector(
                 onTap: () {},
                 child: Row(
@@ -95,10 +169,10 @@ class _SettingsState extends State<Settings> {
                         }).toList(),
                         onChanged: (value) {
                           currency = value!;
+                          store.write('currency', currency);
                           setState(() {});
                         },
                       ),
-                      SizedBox(height: 10),
                     ]),
               ),
               SizedBox(height: 25),
@@ -122,7 +196,8 @@ class _SettingsState extends State<Settings> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    toggle ? toggle = false : toggle = true;
+                    toggle = !toggle;
+                    store.write('togglee', toggle);
                   });
                 },
                 child: Row(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/utils.dart';
+import '../main.dart';
 
 Widget cardStatistics({
   double width = double.infinity,

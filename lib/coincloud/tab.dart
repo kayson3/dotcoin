@@ -31,7 +31,6 @@ class _TabbState extends State<Tabb> {
   late TabItem _current;
   @override
   initState() {
-    store.write('firstLaunch', false);
     saveBal();
     print('htuuu');
     generateXRP();

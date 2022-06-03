@@ -14,6 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_ffi.dart';
 import 'package:http/http.dart' as http;
 
+import '../main.dart';
+import '../networking/getbal.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -25,6 +28,9 @@ class _HomeState extends State<Home> {
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
   @override
   initState() {
+    store.write('firstLaunch', false);
+    store.read('togglee') ?? store.write('togglee', false);
+    store.read('currency') ?? store.write('currency', 'USD');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       print(timeStamp);
       getCryptoStats();
@@ -96,7 +102,9 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldState,
-        backgroundColor: Colors.white,
+        backgroundColor: selectedTheme == 'Themee.dark'
+            ? Color.fromARGB(232, 31, 31, 31)
+            : Colors.white,
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(5), child: Container()),
         body: Padding(
@@ -107,6 +115,9 @@ class _HomeState extends State<Home> {
             height: MediaQuery.of(context).size.height,
             child: RefreshIndicator(
               onRefresh: () {
+                getBal().then((_) {
+                  setState(() {});
+                });
                 return getCryptoStats();
               },
               child: ListView(
@@ -132,11 +143,17 @@ class _HomeState extends State<Home> {
                         height: 5,
                       ),
                       Center(
-                        child: Text('0.00 $currency',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 27)),
+                        child: !store.read('togglee')
+                            ? Text('**** ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 27))
+                            : Text('0.00 ${store.read('currency')}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 27)),
                       ),
                       SizedBox(
                         height: 5,

@@ -7,7 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_ffi.dart';
 
 final store = GetStorage();
-
+bool toggle = store.read('togglee');
 Color blue = Color(0xFF29abe2);
 Color deepBlue = Color(0xFF1b1464);
 

@@ -43,6 +43,8 @@ dependencies:
   wallet_connect: ^1.0.2
   web3dart: ^2.3.5
   flutter_inappwebview: ^5.4.0+2
+  flutter_phoenix: ^1.0.0
+  coingecko_api: ^1.0.2+2
 
 dev_dependencies:
   flutter_test:
