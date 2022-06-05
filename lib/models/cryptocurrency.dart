@@ -35,7 +35,7 @@ final cryptoList = [
       name: 'ARATA',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum)),
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeBinance)),
   CryptoList(
       iconLogo: iconCryptoPath[0],
       cryptoCurrency: 'BTC',
@@ -105,7 +105,7 @@ final cryptoList = [
       name: 'DogeCoin',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeLitecoin)),
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeDogecoin)),
   CryptoList(
       iconLogo: 'assets/icons/polygon.png',
       cryptoCurrency: 'MATIC',
@@ -115,7 +115,7 @@ final cryptoList = [
       name: 'Polygon',
       address: store.read('walletmnemonic') == null
           ? 'xxxxx'
-          : wallet.getAddressForCoin(TWCoinType.TWCoinTypeLitecoin)),
+          : wallet.getAddressForCoin(TWCoinType.TWCoinTypePolygon)),
 
   CryptoList(
       iconLogo: 'assets/icons/stellar.png',

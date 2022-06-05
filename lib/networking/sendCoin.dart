@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dotcoin/models/cryptocurrency.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trust_wallet_core_lib/trust_wallet_core_ffi.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_lib.dart';
@@ -9,7 +10,7 @@ import 'dart:convert';
 import '../global.dart';
 import '../widgets/widgets.dart';
 
-sendArata() async {
+sendArata(context) async {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -27,12 +28,17 @@ sendArata() async {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -65,7 +71,7 @@ sendArata() async {
   }
 }
 
-sendBtc() {
+sendBtc(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -83,17 +89,26 @@ sendBtc() {
       ]
     };
 
-    http.Response response = await http.post(url, body: body);
+    http.Response response = await http
+        .post(url, body: body)
+        .onError<SocketException>((error, stackTrace) {
+      Navigator.pop(context);
+      return dialog2("Network Error", context);
+    });
     var results = jsonDecode(response.body);
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -102,12 +117,17 @@ sendBtc() {
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
       "/v3/bitcoin/wallet/priv",
     );
-    Map<String, dynamic> body = {
+    var header = {'Content-Type': 'application/json'};
+    var body = {
       'index': 0, //554e2ac4-9e3e-4429-b115-6fe1b2f733d0
       'mnemonic': store.read('walletmnemonic')
     };
-
-    http.Response response = await http.post(url, body: body);
+    var bodyEncoded = json.encode(body);
+    http.Response response =
+        await http.post(url, body: bodyEncoded, headers: header);
+    print(response.body);
+    print('hey');
+    debugPrint(response.body);
     var results = jsonDecode(response.body);
     if (response.statusCode == 200) {
       store.write('btcpvkey', results['key']);
@@ -126,7 +146,7 @@ sendBtc() {
   }
 }
 
-sendEth() {
+sendEth(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -144,12 +164,16 @@ sendEth() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -182,7 +206,7 @@ sendEth() {
   }
 }
 
-sendAda() {
+sendAda(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -200,12 +224,16 @@ sendAda() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -258,7 +286,7 @@ generateXRP() async {
   }
 }
 
-sendXrp() {
+sendXrp(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -276,12 +304,16 @@ sendXrp() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -291,7 +323,7 @@ sendXrp() {
   }
 }
 
-sendTron() {
+sendTron(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -309,12 +341,16 @@ sendTron() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -347,7 +383,7 @@ sendTron() {
   }
 }
 
-sendBch() {
+sendBch(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -374,12 +410,16 @@ sendBch() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -412,7 +452,7 @@ sendBch() {
   }
 }
 
-sendDoge() {
+sendDoge(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -441,12 +481,16 @@ sendDoge() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -479,7 +523,7 @@ sendDoge() {
   }
 }
 
-sendMatic() {
+sendMatic(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -497,12 +541,16 @@ sendMatic() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 
@@ -535,7 +583,7 @@ sendMatic() {
   }
 }
 
-sendXlm() {
+sendXlm(context) {
   send() async {
     Uri url = Uri.http(
       "api-eu1.tatum.io", //https://pro-api.coinmarketcap.com
@@ -554,12 +602,16 @@ sendXlm() {
     if (response.statusCode == 200) {
       if (results['failed'] == false) {
         sent = true;
+        Navigator.pop(context);
+        dialog2('Transaction Failed', context);
       }
     } else {
       print(response.statusCode);
       print(response.body);
       sent = false;
       print(results['message']);
+      Navigator.pop(context);
+      dialog2('Transaction Sucessful', context);
     }
   }
 

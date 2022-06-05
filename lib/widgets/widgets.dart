@@ -8,27 +8,27 @@ import 'package:flutter/services.dart';
 
 import '../networking/sendCoin.dart';
 
-Future sendTransaction() async {
+Future sendTransaction(context) async {
   cryptoListd!.cryptoCurrency == 'BTC'
-      ? sendBtc()
+      ? sendBtc(context)
       : cryptoListd!.cryptoCurrency == 'arata'
-          ? sendArata()
+          ? sendArata(context)
           : cryptoListd!.cryptoCurrency == 'ETH'
-              ? sendEth()
+              ? sendEth(context)
               : cryptoListd!.cryptoCurrency == 'ADA'
-                  ? sendAda()
+                  ? sendAda(context)
                   : cryptoListd!.cryptoCurrency == 'XRP'
-                      ? sendXrp()
+                      ? sendXrp(context)
                       : cryptoListd!.cryptoCurrency == 'TRX'
-                          ? sendTron()
+                          ? sendTron(context)
                           : cryptoListd!.cryptoCurrency == 'BCH'
-                              ? sendBch()
+                              ? sendBch(context)
                               : cryptoListd!.cryptoCurrency == 'DOGE'
-                                  ? sendDoge()
+                                  ? sendDoge(context)
                                   : cryptoListd!.cryptoCurrency == 'XLM'
-                                      ? sendMatic()
+                                      ? sendMatic(context)
                                       : cryptoListd!.cryptoCurrency == 'MATIC'
-                                          ? sendMatic()
+                                          ? sendMatic(context)
                                           : null;
 }
 
@@ -39,15 +39,7 @@ Widget floatingButton(
       if (text == 'SEND') {
         sent = false;
         dialog1(context);
-        sendTransaction().then((v) {
-          if (sent = false) {
-            Navigator.pop(context);
-            dialog2('Transaction Failed', context);
-          } else {
-            Navigator.pop(context);
-            dialog2('Transaction Sucessful', context);
-          }
-        });
+        sendTransaction(context);
       }
       if (pressed!) {
         print(text);

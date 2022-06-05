@@ -2,6 +2,7 @@ import 'package:dotcoin/coincloud/importwalle.dart';
 import 'package:dotcoin/models/cryptocurrency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import '../global.dart';
 import '../main.dart';
@@ -20,7 +21,7 @@ class _SettingsState extends State<Settings> {
       ? 'light'
       : store.read('selectedTheme') == 'Themee.dark'
           ? 'dark'
-          : 'System Default';
+          : 'light';
 
   @override
   initState() {
@@ -85,9 +86,9 @@ class _SettingsState extends State<Settings> {
                         ));
                   }).toList(),
                   onChanged: (value) {
-                    value == 'System Default'
+                    value == 'light'
                         ? store
-                            .write('selectedTheme', 'Themee.system')
+                            .write('selectedTheme', 'Themee.light')
                             .then((value) => setState(() {
                                   selectedThemee =
                                       store.read('selectedTheme') ==
@@ -97,32 +98,22 @@ class _SettingsState extends State<Settings> {
                                                   'Themee.dark'
                                               ? 'dark'
                                               : 'System Default';
+
+                                  Phoenix.rebirth(context);
                                 }))
-                        : value == 'light'
-                            ? store
-                                .write('selectedTheme', 'Themee.light')
-                                .then((value) => setState(() {
-                                      selectedThemee =
-                                          store.read('selectedTheme') ==
-                                                  'Themee.light'
-                                              ? 'light'
-                                              : store.read('selectedTheme') ==
-                                                      'Themee.dark'
-                                                  ? 'dark'
-                                                  : 'System Default';
-                                    }))
-                            : store
-                                .write('selectedTheme', 'Themee.dark')
-                                .then((value) => setState(() {
-                                      selectedThemee =
-                                          store.read('selectedTheme') ==
-                                                  'Themee.light'
-                                              ? 'light'
-                                              : store.read('selectedTheme') ==
-                                                      'Themee.dark'
-                                                  ? 'dark'
-                                                  : 'System Default';
-                                    }));
+                        : store
+                            .write('selectedTheme', 'Themee.dark')
+                            .then((value) => setState(() {
+                                  selectedThemee =
+                                      store.read('selectedTheme') ==
+                                              'Themee.light'
+                                          ? 'light'
+                                          : store.read('selectedTheme') ==
+                                                  'Themee.dark'
+                                              ? 'dark'
+                                              : 'System Default';
+                                  Phoenix.rebirth(context);
+                                }));
 
                     print(store.read('selectedTheme'));
                   },

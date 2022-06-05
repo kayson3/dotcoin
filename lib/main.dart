@@ -5,6 +5,7 @@ import 'package:dotcoin/coincloud/welcome.dart';
 import 'package:dotcoin/global.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:trust_wallet_core_lib/trust_wallet_core_lib.dart';
 
@@ -19,7 +20,7 @@ void main() async {
     store.write('selectedTheme', 'Themee.system');
   }
   selectedTheme = store.read('selectedTheme');
-  runApp(const MyApp());
+  runApp(Phoenix(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
